@@ -2,7 +2,7 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 import "./App.css";
 import { Dashboard } from "./pages/Dashboard";
-import { Layout } from "./components/Layout";
+import { Layout } from "./pages/Layout";
 import { Expenses } from "./pages/Expenses";
 import { Incomes } from "./pages/Incomes";
 

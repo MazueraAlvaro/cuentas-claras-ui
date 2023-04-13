@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
-import { Card } from "react-bootstrap";
+import { Button, Card } from "react-bootstrap";
 import { useExpensesStore } from "../../stores/expenses.store";
-import { ExpensesTable } from "../../components/ExpensesTable";
+import { ExpensesTable } from "./ExpensesTable";
 
 export const Expenses: React.FC = () => {
   const loadExpenses = useExpensesStore((state) => state.loadExpenses);
@@ -17,9 +17,17 @@ export const Expenses: React.FC = () => {
         <li className="breadcrumb-item active">Gastos</li>
       </ol>
       <Card className="mb-4">
-        <Card.Header>
-          <i className="fas fa-table me-1"></i>
-          Gastos
+        <Card.Header className="d-flex justify-content-between">
+          <Card.Title className="m-0">
+            <i className="fas fa-table me-1"></i>
+            Gastos
+          </Card.Title>
+          <div >
+            <Button size="sm">
+              <i className="fas fa-plus"></i>
+              Crear
+            </Button>
+          </div>
         </Card.Header>
         <Card.Body>
           <ExpensesTable />

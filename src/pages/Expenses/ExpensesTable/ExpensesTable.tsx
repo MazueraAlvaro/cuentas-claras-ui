@@ -1,5 +1,5 @@
 import { Badge, Button, OverlayTrigger, Table, Tooltip } from "react-bootstrap";
-import { useExpensesStore } from "../../stores/expenses.store";
+import { useExpensesStore } from "../../../stores/expenses.store";
 
 export const ExpensesTable: React.FC = () => {
   const expenses = useExpensesStore((state) => state.expenses);
