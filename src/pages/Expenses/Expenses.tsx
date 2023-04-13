@@ -1,10 +1,12 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Card } from "react-bootstrap";
 import { useExpensesStore } from "../../stores/expenses.store";
 import { ExpensesTable } from "./ExpensesTable";
+import { CreateExpense } from "./CreateExpense";
 
 export const Expenses: React.FC = () => {
   const loadExpenses = useExpensesStore((state) => state.loadExpenses);
+  const [showCreate, setShowCreate] = useState(false);
 
   useEffect(() => {
     loadExpenses();
@@ -22,9 +24,13 @@ export const Expenses: React.FC = () => {
             <i className="fas fa-table me-1"></i>
             Gastos
           </Card.Title>
-          <div >
-            <Button size="sm">
-              <i className="fas fa-plus"></i>
+          <div>
+            <Button
+              variant="success"
+              size="sm"
+              onClick={() => setShowCreate(true)}
+            >
+              <i className="fas fa-plus me-1"></i>
               Crear
             </Button>
           </div>
@@ -33,6 +39,7 @@ export const Expenses: React.FC = () => {
           <ExpensesTable />
         </Card.Body>
       </Card>
+      <CreateExpense show={showCreate} setShow={setShowCreate} />
     </>
   );
 };

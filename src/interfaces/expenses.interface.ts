@@ -15,3 +15,8 @@ export interface Expense {
   endAt: string;
   expenseType: ExpenseType;
 }
+
+export interface ExpenseInitialValues
+  extends Omit<Expense, "id" | "expenseType"> {
+  expenseType: number | null;
+}
