@@ -1,15 +1,18 @@
 import React from "react";
 import { Button, Modal } from "react-bootstrap";
 import { ExpenseForm } from "../ExpenseForm";
+import { Expense } from "../../../interfaces/expenses.interface";
 
 interface CreateExpenseProps {
   show: boolean;
   setShow: (value: boolean) => void;
+  onSuccess: (data: Expense) => void;
 }
 
 export const CreateExpense: React.FC<CreateExpenseProps> = ({
   show,
   setShow,
+  onSuccess,
 }) => {
   const handleClose = () => {
     setShow(false);
@@ -27,7 +30,7 @@ export const CreateExpense: React.FC<CreateExpenseProps> = ({
         <Modal.Title>Crear Gasto</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <ExpenseForm />
+        <ExpenseForm onSuccess={onSuccess} />
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={handleClose}>

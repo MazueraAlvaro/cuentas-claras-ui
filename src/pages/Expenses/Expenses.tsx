@@ -1,16 +1,34 @@
 import React, { useEffect, useState } from "react";
-import { Button, Card } from "react-bootstrap";
+import { Alert, Button, Card } from "react-bootstrap";
 import { useExpensesStore } from "../../stores/expenses.store";
 import { ExpensesTable } from "./ExpensesTable";
 import { CreateExpense } from "./CreateExpense";
+import { Expense } from "../../interfaces/expenses.interface";
 
 export const Expenses: React.FC = () => {
   const loadExpenses = useExpensesStore((state) => state.loadExpenses);
+  const addExpense = useExpensesStore((state) => state.addExpense);
   const [showCreate, setShowCreate] = useState(false);
+  const [alertData, setAlertData] = useState({
+    variant: "",
+    text: "",
+    show: false,
+  });
 
   useEffect(() => {
     loadExpenses();
   }, [loadExpenses]);
+
+  const handleSuccessCreate = (expense: Expense) => {
+    addExpense(expense);
+    setShowCreate(false);
+    setAlertData({
+      variant: "success",
+      text: "Gasto creado exitosamente",
+      show: true,
+    });
+    setTimeout(() => setAlertData({ ...alertData, show: false }), 2500);
+  };
 
   return (
     <>
@@ -18,6 +36,9 @@ export const Expenses: React.FC = () => {
       <ol className="breadcrumb mb-4">
         <li className="breadcrumb-item active">Gastos</li>
       </ol>
+      <Alert variant={alertData.variant} show={alertData.show}>
+        {alertData.text}
+      </Alert>
       <Card className="mb-4">
         <Card.Header className="d-flex justify-content-between">
           <Card.Title className="m-0">
@@ -39,7 +60,11 @@ export const Expenses: React.FC = () => {
           <ExpensesTable />
         </Card.Body>
       </Card>
-      <CreateExpense show={showCreate} setShow={setShowCreate} />
+      <CreateExpense
+        show={showCreate}
+        setShow={setShowCreate}
+        onSuccess={handleSuccessCreate}
+      />
     </>
   );
 };

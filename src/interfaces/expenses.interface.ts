@@ -18,5 +18,5 @@ export interface Expense {
 
 export interface ExpenseInitialValues
   extends Omit<Expense, "id" | "expenseType"> {
-  expenseType: number | null;
+  expenseType: number;
 }
