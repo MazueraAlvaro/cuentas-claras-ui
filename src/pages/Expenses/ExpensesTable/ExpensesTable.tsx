@@ -4,10 +4,12 @@ import { Expense } from "../../../interfaces/expenses.interface";
 
 interface ExpensesTableProps {
   onEditExpense: (expense: Expense) => void;
+  onDeleteExpense: (expense: Expense) => void;
 }
 
 export const ExpensesTable: React.FC<ExpensesTableProps> = ({
   onEditExpense,
+  onDeleteExpense,
 }) => {
   const expenses = useExpensesStore((state) => state.expenses);
 
@@ -66,7 +68,7 @@ export const ExpensesTable: React.FC<ExpensesTableProps> = ({
                   >
                     <i className="fas fa-edit"></i>
                   </Button>
-                  <Button variant="danger" size="sm">
+                  <Button variant="danger" size="sm" onClick={() => onDeleteExpense(expense)}>
                     <i className="fas fa-trash"></i>
                   </Button>
                 </td>

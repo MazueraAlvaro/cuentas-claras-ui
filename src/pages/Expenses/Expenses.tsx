@@ -4,6 +4,8 @@ import { useExpensesStore } from "../../stores/expenses.store";
 import { ExpensesTable } from "./ExpensesTable";
 import { UpsertExpense } from "./UpsertExpense";
 import { Expense } from "../../interfaces/expenses.interface";
+import { ConfirmDialog } from "../../components/ConfirmDialog";
+import axios from "axios";
 
 export const Expenses: React.FC = () => {
   const loadExpenses = useExpensesStore((state) => state.loadExpenses);
@@ -15,6 +17,9 @@ export const Expenses: React.FC = () => {
     text: "",
     show: false,
   });
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [confirmDialogText, setConfirmDialogText] = useState("");
+  const [expenseToDelete, setExpenseToDelete] = useState<Expense | null>(null);
 
   useEffect(() => {
     loadExpenses();
@@ -38,6 +43,28 @@ export const Expenses: React.FC = () => {
   const handleOnEditExpense = (expense: Expense) => {
     setShowUpsert(true);
     setUpsertExpense(expense);
+  };
+
+  const handleOnDeleteExpense = (expense: Expense) => {
+    setConfirmDialogText(`Está seguro de eliminar el gasto "${expense.name}"`);
+    setShowConfirmDialog(true);
+    setExpenseToDelete(expense);
+  };
+
+  const handleOnDialogConfirm = async () => {
+    if (expenseToDelete) {
+      await axios.delete(
+        "http://localhost:3000/api/expenses/" + expenseToDelete.id
+      );
+      setShowConfirmDialog(false);
+      setAlertData({
+        variant: "success",
+        text: `Gasto ${expenseToDelete.name} eliminado exitosamente`,
+        show: true,
+      });
+      setTimeout(() => setAlertData({ ...alertData, show: false }), 2500);
+      loadExpenses();
+    }
   };
 
   return (
@@ -67,7 +94,10 @@ export const Expenses: React.FC = () => {
           </div>
         </Card.Header>
         <Card.Body>
-          <ExpensesTable onEditExpense={handleOnEditExpense} />
+          <ExpensesTable
+            onEditExpense={handleOnEditExpense}
+            onDeleteExpense={handleOnDeleteExpense}
+          />
         </Card.Body>
       </Card>
       <UpsertExpense
@@ -75,6 +105,12 @@ export const Expenses: React.FC = () => {
         setShow={setShowUpsert}
         onSuccess={handleSuccessCreate}
         expense={upsertExpense}
+      />
+      <ConfirmDialog
+        show={showConfirmDialog}
+        setShow={setShowConfirmDialog}
+        onConfirm={handleOnDialogConfirm}
+        text={confirmDialogText}
       />
     </>
   );
