@@ -1,47 +1,53 @@
 import { Formik, FormikHelpers } from "formik";
+import axios from "axios";
+import { omit } from "lodash";
+import { useEffect, useState } from "react";
+import { Col, Form, Row } from "react-bootstrap";
+import * as Yup from "yup";
 import {
   Expense,
   ExpenseInitialValues,
   ExpenseType,
 } from "../../../interfaces/expenses.interface";
-import { Col, Form, Row } from "react-bootstrap";
-import * as Yup from "yup";
-import { useEffect, useState } from "react";
-import axios from "axios";
 
 interface ExpenseFormProps {
-  onSuccess: (data: Expense) => void;
+  expense: Expense | null;
+  onSubmit: (values: ExpenseInitialValues) => Promise<boolean>;
 }
 
-export const ExpenseForm: React.FC<ExpenseFormProps> = ({ onSuccess }) => {
+export const ExpenseForm: React.FC<ExpenseFormProps> = ({
+  expense,
+  onSubmit,
+}) => {
   const handleSubmit = (
     values: ExpenseInitialValues,
     { setSubmitting }: FormikHelpers<ExpenseInitialValues>
   ) => {
-    axios
-      .post("http://localhost:3000/api/expenses", {
-        ...values,
-        expenseType: parseInt(values.expenseType.toString()),
-        startAt: values.startAt === "" ? null : values.startAt,
-        endAt: values.endAt === "" ? null : values.endAt,
-      })
-      .then(({ data }) => {
-        onSuccess(data);
-      })
-      .finally(() => setSubmitting(false));
+    console.log(values);
+    onSubmit(values).then(() => setSubmitting(false));
   };
 
   const [expenseTypes, setExpenseTypes] = useState<ExpenseType[]>([]);
 
-  const initialValues: ExpenseInitialValues = {
-    name: "",
-    description: "",
-    amount: 0,
-    isRecurring: false,
-    startAt: "",
-    endAt: "",
-    dueDay: 1,
-    expenseType: 0,
+  const getInitialValues = (): ExpenseInitialValues => {
+    if (expense) {
+      return {
+        ...omit(expense, ["id"]),
+        expenseType: expense.expenseType.id,
+        startAt: expense.startAt ?? "",
+        endAt: expense.endAt ?? "",
+      };
+    }
+    return {
+      name: "",
+      description: "",
+      amount: 0,
+      isRecurring: false,
+      startAt: "",
+      endAt: "",
+      dueDay: 1,
+      expenseType: 0,
+    };
   };
 
   const expenseFormSchema = Yup.object().shape({
@@ -81,7 +87,7 @@ export const ExpenseForm: React.FC<ExpenseFormProps> = ({ onSuccess }) => {
   return (
     <Formik
       onSubmit={handleSubmit}
-      initialValues={initialValues}
+      initialValues={getInitialValues()}
       validationSchema={expenseFormSchema}
     >
       {({ handleSubmit, handleChange, values, touched, errors }) => (

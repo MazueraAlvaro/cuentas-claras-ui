@@ -1,7 +1,14 @@
 import { Badge, Button, OverlayTrigger, Table, Tooltip } from "react-bootstrap";
 import { useExpensesStore } from "../../../stores/expenses.store";
+import { Expense } from "../../../interfaces/expenses.interface";
 
-export const ExpensesTable: React.FC = () => {
+interface ExpensesTableProps {
+  onEditExpense: (expense: Expense) => void;
+}
+
+export const ExpensesTable: React.FC<ExpensesTableProps> = ({
+  onEditExpense,
+}) => {
   const expenses = useExpensesStore((state) => state.expenses);
 
   return (
@@ -52,7 +59,11 @@ export const ExpensesTable: React.FC = () => {
                 </td>
                 <td>{expense.expenseType.name}</td>
                 <td>
-                  <Button size="sm" className="me-1">
+                  <Button
+                    size="sm"
+                    className="me-1"
+                    onClick={() => onEditExpense(expense)}
+                  >
                     <i className="fas fa-edit"></i>
                   </Button>
                   <Button variant="danger" size="sm">

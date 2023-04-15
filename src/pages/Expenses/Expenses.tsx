@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Alert, Button, Card } from "react-bootstrap";
 import { useExpensesStore } from "../../stores/expenses.store";
 import { ExpensesTable } from "./ExpensesTable";
-import { CreateExpense } from "./CreateExpense";
+import { UpsertExpense } from "./UpsertExpense";
 import { Expense } from "../../interfaces/expenses.interface";
 
 export const Expenses: React.FC = () => {
   const loadExpenses = useExpensesStore((state) => state.loadExpenses);
   const addExpense = useExpensesStore((state) => state.addExpense);
-  const [showCreate, setShowCreate] = useState(false);
+  const [upsertExpense, setUpsertExpense] = useState<Expense | null>(null);
+  const [showUpsert, setShowUpsert] = useState(false);
   const [alertData, setAlertData] = useState({
     variant: "",
     text: "",
@@ -20,14 +21,23 @@ export const Expenses: React.FC = () => {
   }, [loadExpenses]);
 
   const handleSuccessCreate = (expense: Expense) => {
-    addExpense(expense);
-    setShowCreate(false);
+    if (upsertExpense) {
+      loadExpenses();
+    } else {
+      addExpense(expense);
+    }
+    setShowUpsert(false);
     setAlertData({
       variant: "success",
-      text: "Gasto creado exitosamente",
+      text: `Gasto ${expense ? "actualizado" : "creado"} exitosamente`,
       show: true,
     });
     setTimeout(() => setAlertData({ ...alertData, show: false }), 2500);
+  };
+
+  const handleOnEditExpense = (expense: Expense) => {
+    setShowUpsert(true);
+    setUpsertExpense(expense);
   };
 
   return (
@@ -49,7 +59,7 @@ export const Expenses: React.FC = () => {
             <Button
               variant="success"
               size="sm"
-              onClick={() => setShowCreate(true)}
+              onClick={() => setShowUpsert(true)}
             >
               <i className="fas fa-plus me-1"></i>
               Crear
@@ -57,13 +67,14 @@ export const Expenses: React.FC = () => {
           </div>
         </Card.Header>
         <Card.Body>
-          <ExpensesTable />
+          <ExpensesTable onEditExpense={handleOnEditExpense} />
         </Card.Body>
       </Card>
-      <CreateExpense
-        show={showCreate}
-        setShow={setShowCreate}
+      <UpsertExpense
+        show={showUpsert}
+        setShow={setShowUpsert}
         onSuccess={handleSuccessCreate}
+        expense={upsertExpense}
       />
     </>
   );
