@@ -5,36 +5,34 @@ import { useEffect, useState } from "react";
 import { Col, Form, Row } from "react-bootstrap";
 import * as Yup from "yup";
 import {
-  Expense,
-  ExpenseInitialValues,
-  ExpenseType,
-} from "../../../interfaces/expenses.interface";
+  Income,
+  IncomeInitialValues,
+  IncomeType,
+} from "../../../interfaces/incomes.interface";
 
-interface ExpenseFormProps {
-  expense: Expense | null;
-  onSubmit: (values: ExpenseInitialValues) => Promise<boolean>;
+interface IncomeFormProps {
+  income: Income | null;
+  onSubmit: (values: IncomeInitialValues) => Promise<boolean>;
 }
 
-export const ExpenseForm: React.FC<ExpenseFormProps> = ({
-  expense,
-  onSubmit,
-}) => {
+export const IncomeForm: React.FC<IncomeFormProps> = ({ income, onSubmit }) => {
   const handleSubmit = (
-    values: ExpenseInitialValues,
-    { setSubmitting }: FormikHelpers<ExpenseInitialValues>
+    values: IncomeInitialValues,
+    { setSubmitting }: FormikHelpers<IncomeInitialValues>
   ) => {
+    console.log(values);
     onSubmit(values).then(() => setSubmitting(false));
   };
 
-  const [expenseTypes, setExpenseTypes] = useState<ExpenseType[]>([]);
+  const [incomeTypes, setIncomeTypes] = useState<IncomeType[]>([]);
 
-  const getInitialValues = (): ExpenseInitialValues => {
-    if (expense) {
+  const getInitialValues = (): IncomeInitialValues => {
+    if (income) {
       return {
-        ...omit(expense, ["id"]),
-        expenseType: expense.expenseType.id,
-        startAt: expense.startAt ?? "",
-        endAt: expense.endAt ?? "",
+        ...omit(income, ["id"]),
+        incomeType: income.incomeType.id,
+        startAt: income.startAt ?? "",
+        endAt: income.endAt ?? "",
       };
     }
     return {
@@ -44,12 +42,11 @@ export const ExpenseForm: React.FC<ExpenseFormProps> = ({
       isRecurring: false,
       startAt: "",
       endAt: "",
-      dueDay: 1,
-      expenseType: 0,
+      incomeType: 0,
     };
   };
 
-  const expenseFormSchema = Yup.object().shape({
+  const incomeFormSchema = Yup.object().shape({
     name: Yup.string().required("Requerido"),
     amount: Yup.number()
       .min(0, "Minimo 0")
@@ -63,34 +60,26 @@ export const ExpenseForm: React.FC<ExpenseFormProps> = ({
         then: (schema) => schema.required("Requerido"),
       }),
     endAt: Yup.date().typeError("Fecha no válida"),
-    dueDay: Yup.number()
-      .integer("Debe ser un numero entero")
-      .min(1, "Minimo 1")
-      .max(31, "Maximo 31")
-      .when("isRecurring", {
-        is: true,
-        then: (schema) => schema.required("Requerido"),
-      }),
-    expenseType: Yup.number()
+    incomeType: Yup.number()
       .required("Requerido")
-      .min(1, "Seleccione un tipo de gasto"),
+      .min(1, "Seleccione un tipo de ingreso"),
     description: Yup.string(),
   });
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/api/expenses/types")
-      .then(({ data }) => setExpenseTypes(data));
+      .get("http://localhost:3000/api/incomes/types")
+      .then(({ data }) => setIncomeTypes(data));
   }, []);
 
   return (
     <Formik
       onSubmit={handleSubmit}
       initialValues={getInitialValues()}
-      validationSchema={expenseFormSchema}
+      validationSchema={incomeFormSchema}
     >
       {({ handleSubmit, handleChange, values, touched, errors }) => (
-        <Form noValidate onSubmit={handleSubmit} id="expense-form">
+        <Form noValidate onSubmit={handleSubmit} id="income-form">
           <Form.Group as={Row} className="mb-3">
             <Form.Label column sm={3}>
               Nombre
@@ -98,7 +87,7 @@ export const ExpenseForm: React.FC<ExpenseFormProps> = ({
             <Col sm={9}>
               <Form.Control
                 type="text"
-                placeholder="Nombre del gasto"
+                placeholder="Nombre del ingreso"
                 value={values.name}
                 onChange={handleChange}
                 isValid={touched.name && !errors.name}
@@ -118,7 +107,7 @@ export const ExpenseForm: React.FC<ExpenseFormProps> = ({
             <Col sm={9}>
               <Form.Control
                 type="number"
-                placeholder="Monto del gasto"
+                placeholder="Monto del ingreso"
                 value={values.amount}
                 onChange={handleChange}
                 isValid={touched.amount && !errors.amount}
@@ -190,25 +179,6 @@ export const ExpenseForm: React.FC<ExpenseFormProps> = ({
                   </Form.Control.Feedback>
                 </Col>
               </Form.Group>
-              <Form.Group as={Row} className="mb-3">
-                <Form.Label column sm={3}>
-                  Vencimiento
-                </Form.Label>
-                <Col sm={9}>
-                  <Form.Control
-                    type="number"
-                    placeholder="Dia Vencimiento"
-                    value={values.dueDay}
-                    onChange={handleChange}
-                    isValid={touched.dueDay && !errors.dueDay}
-                    isInvalid={!!errors.dueDay}
-                    name="dueDay"
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.dueDay}
-                  </Form.Control.Feedback>
-                </Col>
-              </Form.Group>
             </>
           )}
           <Form.Group as={Row} className="mb-3">
@@ -217,22 +187,22 @@ export const ExpenseForm: React.FC<ExpenseFormProps> = ({
             </Form.Label>
             <Col sm={9}>
               <Form.Select
-                placeholder="Tipo de gasto"
-                value={values.expenseType}
+                placeholder="Tipo de ingreso"
+                value={values.incomeType}
                 onChange={handleChange}
-                isValid={touched.expenseType && !errors.expenseType}
-                isInvalid={!!errors.expenseType}
-                name="expenseType"
+                isValid={touched.incomeType && !errors.incomeType}
+                isInvalid={!!errors.incomeType}
+                name="incomeType"
               >
-                <option value={0}>Seleccione tipo de gasto</option>
-                {expenseTypes.map((expense) => (
-                  <option key={expense.id} value={expense.id}>
-                    {expense.name}
+                <option value={0}>Seleccione tipo de ingreso</option>
+                {incomeTypes.map((income) => (
+                  <option key={income.id} value={income.id}>
+                    {income.name}
                   </option>
                 ))}
               </Form.Select>
               <Form.Control.Feedback type="invalid">
-                {errors.expenseType}
+                {errors.incomeType}
               </Form.Control.Feedback>
             </Col>
           </Form.Group>
@@ -243,7 +213,7 @@ export const ExpenseForm: React.FC<ExpenseFormProps> = ({
             <Col sm={9}>
               <Form.Control
                 as="textarea"
-                placeholder="Descripción del gasto"
+                placeholder="Descripción del ingreso"
                 value={values.description}
                 onChange={handleChange}
                 isValid={touched.description && !errors.description}

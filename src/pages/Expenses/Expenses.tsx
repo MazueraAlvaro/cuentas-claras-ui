@@ -34,7 +34,7 @@ export const Expenses: React.FC = () => {
     setShowUpsert(false);
     setAlertData({
       variant: "success",
-      text: `Gasto ${expense ? "actualizado" : "creado"} exitosamente`,
+      text: `Gasto ${upsertExpense ? "actualizado" : "creado"} exitosamente`,
       show: true,
     });
     setTimeout(() => setAlertData({ ...alertData, show: false }), 2500);
