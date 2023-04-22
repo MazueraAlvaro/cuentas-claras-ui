@@ -1,10 +1,24 @@
-import { Badge, Button, OverlayTrigger, Table, Tooltip } from "react-bootstrap";
+import {
+  Badge,
+  Button,
+  Form,
+  OverlayTrigger,
+  Table,
+  Tooltip,
+} from "react-bootstrap";
 import { MonthIncome } from "../../../interfaces/months.interface";
 import { currencyFormat } from "../../../utils/currency-format";
+import { ChangeEvent, useState } from "react";
+
+export interface onUpdateIncomeProps {
+  monthIncome: MonthIncome;
+  amount: number;
+  received: boolean;
+}
 
 interface MonthIncomeTableProps {
   monthIncomes: MonthIncome[];
-  onEditMonthIncome: (monthIncome: MonthIncome) => void;
+  onUpdateMonthIncome: (data: onUpdateIncomeProps) => void;
   onDeleteMonthIncome: (monthIncome: MonthIncome) => void;
   totalIncomes: number;
   currentBalance: number;
@@ -14,13 +28,40 @@ interface MonthIncomeTableProps {
 
 export const MonthIncomesTable: React.FC<MonthIncomeTableProps> = ({
   monthIncomes,
-  onEditMonthIncome,
+  onUpdateMonthIncome,
   onDeleteMonthIncome,
   totalIncomes,
   currentBalance,
   difference,
   totalRows,
 }) => {
+  const [editMonthIncome, setEditMonthIncome] = useState<MonthIncome>();
+  const [editAmountInput, setEditAmountInput] = useState<number>(0);
+  const [editReceivedInput, setEditReceivedInput] = useState<boolean>(false);
+  const handleEditMonthIncome = (monthIncome: MonthIncome) => {
+    setEditMonthIncome(monthIncome);
+    setEditAmountInput(monthIncome.amount);
+    setEditReceivedInput(monthIncome.received);
+  };
+  const handleAmountChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setEditAmountInput(parseInt(e.target.value));
+  };
+  const handleReceivedInput = (e: ChangeEvent<HTMLInputElement>) => {
+    setEditReceivedInput(e.target.checked);
+  };
+  const handleSaveEditMonthIncome = () => {
+    if (editMonthIncome) {
+      onUpdateMonthIncome({
+        monthIncome: editMonthIncome,
+        amount: editAmountInput,
+        received: editReceivedInput,
+      });
+    }
+    setEditMonthIncome(undefined);
+  };
+  const handleCancelEditMonthIncome = () => {
+    setEditMonthIncome(undefined);
+  };
   return (
     <Table>
       <thead>
@@ -54,28 +95,71 @@ export const MonthIncomesTable: React.FC<MonthIncomeTableProps> = ({
                   </OverlayTrigger>
                 </td>
                 <td className="text-right">
-                  {currencyFormat(monthIncome.amount)}
+                  {editMonthIncome && editMonthIncome.id === monthIncome.id ? (
+                    <Form.Control
+                      type="number"
+                      value={editAmountInput}
+                      onChange={handleAmountChange}
+                    />
+                  ) : (
+                    currencyFormat(monthIncome.amount)
+                  )}
                 </td>
                 <td>
-                  <Badge pill bg={monthIncome.received ? "success" : "danger"}>
-                    {monthIncome.received ? "SI" : "NO"}
-                  </Badge>
+                  {editMonthIncome && editMonthIncome.id === monthIncome.id ? (
+                    <Form.Check // prettier-ignore
+                      type="switch"
+                      className="mt-2"
+                      checked={editReceivedInput}
+                      onChange={handleReceivedInput}
+                    />
+                  ) : (
+                    <Badge
+                      pill
+                      bg={monthIncome.received ? "success" : "danger"}
+                    >
+                      {monthIncome.received ? "SI" : "NO"}
+                    </Badge>
+                  )}
                 </td>
                 <td>
-                  <Button
-                    size="sm"
-                    className="me-1"
-                    onClick={() => onEditMonthIncome(monthIncome)}
-                  >
-                    <i className="fas fa-edit"></i>
-                  </Button>
-                  <Button
-                    variant="danger"
-                    size="sm"
-                    onClick={() => onDeleteMonthIncome(monthIncome)}
-                  >
-                    <i className="fas fa-trash"></i>
-                  </Button>
+                  {editMonthIncome && editMonthIncome.id === monthIncome.id ? (
+                    <Button
+                      size="sm"
+                      className="me-1"
+                      variant="success"
+                      onClick={() => handleSaveEditMonthIncome()}
+                      as="span"
+                    >
+                      <i className="fas fa-check"></i>
+                    </Button>
+                  ) : (
+                    <Button
+                      size="sm"
+                      className="me-1"
+                      onClick={() => handleEditMonthIncome(monthIncome)}
+                    >
+                      <i className="fas fa-edit"></i>
+                    </Button>
+                  )}
+                  {editMonthIncome && editMonthIncome.id === monthIncome.id ? (
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      onClick={handleCancelEditMonthIncome}
+                      as="span"
+                    >
+                      <i className="fas fa-xmark"></i>
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      onClick={() => onDeleteMonthIncome(monthIncome)}
+                    >
+                      <i className="fas fa-trash"></i>
+                    </Button>
+                  )}
                 </td>
               </tr>
             );
@@ -83,7 +167,7 @@ export const MonthIncomesTable: React.FC<MonthIncomeTableProps> = ({
         {monthIncomes &&
           Array.from({ length: totalRows - monthIncomes.length }).map(
             (_, index) => (
-              <tr>
+              <tr key={index}>
                 <td colSpan={5} height={48}></td>
               </tr>
             )

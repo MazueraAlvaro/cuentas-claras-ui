@@ -4,14 +4,19 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { Card, Col, Form, Row } from "react-bootstrap";
+import { Button, Card, Col, Form, Row } from "react-bootstrap";
 import { MonthExpensesTable } from "./MonthExpensesTable";
 import { useMonthStore } from "../../stores/months.store";
 import { MonthExpense, MonthIncome } from "../../interfaces/months.interface";
-import { MonthIncomesTable } from "./MonthIncomesTable/MonthIncomesTable";
+import {
+  MonthIncomesTable,
+  onUpdateIncomeProps,
+} from "./MonthIncomesTable/MonthIncomesTable";
 
 export const Dashboard: React.FC = () => {
   const loadMonthByDate = useMonthStore((state) => state.loadMonthByDate);
+  const openMonth = useMonthStore((state) => state.openMonth);
+  const updateMonthIncome = useMonthStore((state) => state.updateMonthIncome);
   const month = useMonthStore((state) => state.month);
 
   const [selectedMonth, setSelectedMonth] = useState(
@@ -19,10 +24,19 @@ export const Dashboard: React.FC = () => {
       .toString()
       .padStart(2, "0")}-00`
   );
+  const [showOpenMonth, setShowOpenMonth] = useState(false);
 
   useEffect(() => {
-    loadMonthByDate(selectedMonth);
+    loadMonthByDate(selectedMonth).catch(() => {
+      setShowOpenMonth(true);
+    });
   }, [selectedMonth, loadMonthByDate]);
+
+  useEffect(() => {
+    if (month) {
+      setShowOpenMonth(false);
+    }
+  }, [month]);
 
   const getMonthsOptions = () => {
     return Array.from({ length: new Date().getMonth() + 2 }, (_, i) => {
@@ -55,7 +69,17 @@ export const Dashboard: React.FC = () => {
   const handleOnDeleteMonthExpense = (monthExpense: MonthExpense) => {};
   const handleOnEditMonthExpense = (monthExpense: MonthExpense) => {};
   const handleOnDeleteMonthIncome = (monthExpense: MonthIncome) => {};
-  const handleOnEditMonthIncome = (monthExpense: MonthIncome) => {};
+  const handleUpdateMonthIncome = ({
+    amount,
+    received,
+    monthIncome,
+  }: onUpdateIncomeProps) => {
+    updateMonthIncome(monthIncome.id, amount, received);
+  };
+
+  const handleOnOpenMonth = () => {
+    openMonth(selectedMonth);
+  };
 
   return (
     <>
@@ -65,7 +89,7 @@ export const Dashboard: React.FC = () => {
       </ol>
       <Card className="mb-4">
         <Card.Header className="d-flex justify-content-between">
-          <Card.Title className="m-0">
+          <Card.Title className="m-0 pt-2">
             <i className="fas fa-calendar me-1"></i>
             Mes{" "}
             {Intl.DateTimeFormat("es-CO", { month: "long" })
@@ -75,13 +99,28 @@ export const Dashboard: React.FC = () => {
               selectedMonth.slice(0, 4)}
           </Card.Title>
           <div>
-            <Form.Select
-              onChange={handleSelectMonthChange}
-              value={selectedMonth}
-              size="lg"
-            >
-              {getMonthsOptions()}
-            </Form.Select>
+            <div className="d-flex justify-content-between">
+              <div>
+                <Button
+                  className="me-1"
+                  variant="primary"
+                  size="lg"
+                  hidden={!showOpenMonth}
+                  onClick={handleOnOpenMonth}
+                >
+                  Abrir Mes
+                </Button>
+              </div>
+              <div>
+                <Form.Select
+                  onChange={handleSelectMonthChange}
+                  value={selectedMonth}
+                  size="lg"
+                >
+                  {getMonthsOptions()}
+                </Form.Select>
+              </div>
+            </div>
           </div>
         </Card.Header>
         <Card.Body>
@@ -101,8 +140,8 @@ export const Dashboard: React.FC = () => {
               {month && (
                 <MonthIncomesTable
                   monthIncomes={month.monthIncomes}
-                  onEditMonthIncome={handleOnEditMonthIncome}
                   onDeleteMonthIncome={handleOnDeleteMonthIncome}
+                  onUpdateMonthIncome={handleUpdateMonthIncome}
                   totalIncomes={month.totalIncomes}
                   currentBalance={month.currentBalance}
                   difference={month.difference}
