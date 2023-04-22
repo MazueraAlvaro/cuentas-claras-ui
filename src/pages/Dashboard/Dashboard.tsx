@@ -22,6 +22,8 @@ export const Dashboard: React.FC = () => {
   const openMonth = useMonthStore((state) => state.openMonth);
   const updateMonthIncome = useMonthStore((state) => state.updateMonthIncome);
   const updateMonthExpense = useMonthStore((state) => state.updateMonthExpense);
+  const deleteMonthExpense = useMonthStore((state) => state.deleteMonthExpense);
+  const deleteMonthIncome = useMonthStore((state) => state.deleteMonthIncome);
 
   const [selectedMonth, setSelectedMonth] = useState(
     `${new Date().getFullYear()}-${(new Date().getMonth() + 1)
@@ -70,8 +72,10 @@ export const Dashboard: React.FC = () => {
     setSelectedMonth(e.target.value);
   };
 
-  const handleOnDeleteMonthExpense = (monthExpense: MonthExpense) => {};
-  const handleOnDeleteMonthIncome = (monthExpense: MonthIncome) => {};
+  const handleOnDeleteMonthExpense = (monthExpense: MonthExpense) =>
+    deleteMonthExpense(monthExpense.id);
+  const handleOnDeleteMonthIncome = (monthIncome: MonthIncome) =>
+    deleteMonthIncome(monthIncome.id);
   const handleUpdateMonthIncome = ({
     amount,
     received,
