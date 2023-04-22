@@ -5,7 +5,10 @@ import React, {
   useState,
 } from "react";
 import { Button, Card, Col, Form, Row } from "react-bootstrap";
-import { MonthExpensesTable } from "./MonthExpensesTable";
+import {
+  MonthExpensesTable,
+  onUpdateMonthExpenseProps,
+} from "./MonthExpensesTable";
 import { useMonthStore } from "../../stores/months.store";
 import { MonthExpense, MonthIncome } from "../../interfaces/months.interface";
 import {
@@ -14,10 +17,11 @@ import {
 } from "./MonthIncomesTable/MonthIncomesTable";
 
 export const Dashboard: React.FC = () => {
+  const month = useMonthStore((state) => state.month);
   const loadMonthByDate = useMonthStore((state) => state.loadMonthByDate);
   const openMonth = useMonthStore((state) => state.openMonth);
   const updateMonthIncome = useMonthStore((state) => state.updateMonthIncome);
-  const month = useMonthStore((state) => state.month);
+  const updateMonthExpense = useMonthStore((state) => state.updateMonthExpense);
 
   const [selectedMonth, setSelectedMonth] = useState(
     `${new Date().getFullYear()}-${(new Date().getMonth() + 1)
@@ -67,7 +71,6 @@ export const Dashboard: React.FC = () => {
   };
 
   const handleOnDeleteMonthExpense = (monthExpense: MonthExpense) => {};
-  const handleOnEditMonthExpense = (monthExpense: MonthExpense) => {};
   const handleOnDeleteMonthIncome = (monthExpense: MonthIncome) => {};
   const handleUpdateMonthIncome = ({
     amount,
@@ -75,6 +78,14 @@ export const Dashboard: React.FC = () => {
     monthIncome,
   }: onUpdateIncomeProps) => {
     updateMonthIncome(monthIncome.id, amount, received);
+  };
+
+  const handleUpdateMonthExpense = ({
+    amount,
+    paid,
+    monthExpense,
+  }: onUpdateMonthExpenseProps) => {
+    updateMonthExpense(monthExpense.id, amount, paid);
   };
 
   const handleOnOpenMonth = () => {
@@ -129,7 +140,7 @@ export const Dashboard: React.FC = () => {
               {month && (
                 <MonthExpensesTable
                   monthExpenses={month.monthExpenses}
-                  onEditMonthExpense={handleOnEditMonthExpense}
+                  onUpdateMonthExpense={handleUpdateMonthExpense}
                   onDeleteMonthExpense={handleOnDeleteMonthExpense}
                   totalExpenses={month.totalExpenses}
                   totalUnpaid={month.totalUnpaid}

@@ -1,10 +1,24 @@
-import { Badge, Button, OverlayTrigger, Table, Tooltip } from "react-bootstrap";
+import {
+  Badge,
+  Button,
+  Form,
+  OverlayTrigger,
+  Table,
+  Tooltip,
+} from "react-bootstrap";
 import { MonthExpense } from "../../../interfaces/months.interface";
 import { currencyFormat } from "../../../utils/currency-format";
+import { ChangeEvent, useState } from "react";
+
+export interface onUpdateMonthExpenseProps {
+  monthExpense: MonthExpense;
+  amount: number;
+  paid: boolean;
+}
 
 interface MonthExpenseTableProps {
   monthExpenses: MonthExpense[];
-  onEditMonthExpense: (monthExpense: MonthExpense) => void;
+  onUpdateMonthExpense: (data: onUpdateMonthExpenseProps) => void;
   onDeleteMonthExpense: (monthExpense: MonthExpense) => void;
   totalExpenses: number;
   totalUnpaid: number;
@@ -12,11 +26,38 @@ interface MonthExpenseTableProps {
 
 export const MonthExpensesTable: React.FC<MonthExpenseTableProps> = ({
   monthExpenses,
-  onEditMonthExpense,
+  onUpdateMonthExpense,
   onDeleteMonthExpense,
   totalExpenses,
   totalUnpaid,
 }) => {
+  const [editMonthExpense, setEditMonthExpense] = useState<MonthExpense>();
+  const [editAmountInput, setEditAmountInput] = useState<number>(0);
+  const [editPaidInput, setEditpaidInput] = useState<boolean>(false);
+  const handleEditMonthIncome = (monthExpense: MonthExpense) => {
+    setEditMonthExpense(monthExpense);
+    setEditAmountInput(monthExpense.amount);
+    setEditpaidInput(monthExpense.paid);
+  };
+  const handleAmountChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setEditAmountInput(parseInt(e.target.value));
+  };
+  const handlePaidInput = (e: ChangeEvent<HTMLInputElement>) => {
+    setEditpaidInput(e.target.checked);
+  };
+  const handleSaveEditMonthIncome = () => {
+    if (editMonthExpense) {
+      onUpdateMonthExpense({
+        monthExpense: editMonthExpense,
+        amount: editAmountInput,
+        paid: editPaidInput,
+      });
+    }
+    setEditMonthExpense(undefined);
+  };
+  const handleCancelEditMonthIncome = () => {
+    setEditMonthExpense(undefined);
+  };
   return (
     <Table>
       <thead>
@@ -41,7 +82,7 @@ export const MonthExpensesTable: React.FC<MonthExpenseTableProps> = ({
                 <td>{index + 1}</td>
                 <td>
                   <OverlayTrigger
-                    placement="right"
+                    placement="top"
                     overlay={
                       <Tooltip>{monthExpense.expense.description}</Tooltip>
                     }
@@ -50,28 +91,72 @@ export const MonthExpensesTable: React.FC<MonthExpenseTableProps> = ({
                   </OverlayTrigger>
                 </td>
                 <td className="text-right">
-                  {currencyFormat(monthExpense.amount)}
+                  {editMonthExpense &&
+                  editMonthExpense.id === monthExpense.id ? (
+                    <Form.Control
+                      type="number"
+                      value={editAmountInput}
+                      onChange={handleAmountChange}
+                    />
+                  ) : (
+                    currencyFormat(monthExpense.amount)
+                  )}
                 </td>
                 <td>
-                  <Badge pill bg={monthExpense.paid ? "success" : "danger"}>
-                    {monthExpense.paid ? "SI" : "NO"}
-                  </Badge>
+                  {editMonthExpense &&
+                  editMonthExpense.id === monthExpense.id ? (
+                    <Form.Check // prettier-ignore
+                      type="switch"
+                      className="mt-2"
+                      checked={editPaidInput}
+                      onChange={handlePaidInput}
+                    />
+                  ) : (
+                    <Badge pill bg={monthExpense.paid ? "success" : "danger"}>
+                      {monthExpense.paid ? "SI" : "NO"}
+                    </Badge>
+                  )}
                 </td>
                 <td>
-                  <Button
-                    size="sm"
-                    className="me-1"
-                    onClick={() => onEditMonthExpense(monthExpense)}
-                  >
-                    <i className="fas fa-edit"></i>
-                  </Button>
-                  <Button
-                    variant="danger"
-                    size="sm"
-                    onClick={() => onDeleteMonthExpense(monthExpense)}
-                  >
-                    <i className="fas fa-trash"></i>
-                  </Button>
+                  {editMonthExpense &&
+                  editMonthExpense.id === monthExpense.id ? (
+                    <Button
+                      size="sm"
+                      className="me-1"
+                      variant="success"
+                      onClick={() => handleSaveEditMonthIncome()}
+                      as="span"
+                    >
+                      <i className="fas fa-check"></i>
+                    </Button>
+                  ) : (
+                    <Button
+                      size="sm"
+                      className="me-1"
+                      onClick={() => handleEditMonthIncome(monthExpense)}
+                    >
+                      <i className="fas fa-edit"></i>
+                    </Button>
+                  )}
+                  {editMonthExpense &&
+                  editMonthExpense.id === monthExpense.id ? (
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      onClick={handleCancelEditMonthIncome}
+                      as="span"
+                    >
+                      <i className="fas fa-xmark"></i>
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      onClick={() => onDeleteMonthExpense(monthExpense)}
+                    >
+                      <i className="fas fa-trash"></i>
+                    </Button>
+                  )}
                 </td>
               </tr>
             );

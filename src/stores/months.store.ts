@@ -12,6 +12,11 @@ interface MonthStore {
     amount: number,
     received: boolean
   ) => Promise<void>;
+  updateMonthExpense: (
+    monthExpenseId: number,
+    amount: number,
+    paid: boolean
+  ) => Promise<void>;
 }
 
 export const useMonthStore = create<MonthStore>((set, get) => ({
@@ -48,6 +53,21 @@ export const useMonthStore = create<MonthStore>((set, get) => ({
       {
         amount,
         received,
+      }
+    );
+    set({ month: data });
+  },
+  updateMonthExpense: async (
+    monthExpenseId: number,
+    amount: number,
+    paid: boolean
+  ) => {
+    const month = get().month;
+    const { data } = await axios.patch(
+      `http://localhost:3000/api/months/${month?.id}/monthExpenses/${monthExpenseId}`,
+      {
+        amount,
+        paid,
       }
     );
     set({ month: data });

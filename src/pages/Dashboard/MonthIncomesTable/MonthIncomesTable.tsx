@@ -86,7 +86,7 @@ export const MonthIncomesTable: React.FC<MonthIncomeTableProps> = ({
                 <td>{index + 1}</td>
                 <td>
                   <OverlayTrigger
-                    placement="right"
+                    placement="top"
                     overlay={
                       <Tooltip>{monthIncome.income.description}</Tooltip>
                     }
