@@ -4,7 +4,7 @@ import axios from "axios";
 
 interface ExpensesStore {
   expenses: Expense[];
-  loadExpenses: () => void;
+  loadExpenses: () => Promise<void>;
   addExpense: (expense: Expense) => void;
 }
 

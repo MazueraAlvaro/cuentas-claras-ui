@@ -36,3 +36,11 @@ export interface Month {
   monthIncomes: MonthIncome[];
   monthExpenses: MonthExpense[];
 }
+
+export const isMonthIncome = (obj: any): obj is MonthIncome => {
+  return "received" in obj;
+};
+
+export const isMonthExpense = (obj: any): obj is MonthExpense => {
+  return "paid" in obj;
+};

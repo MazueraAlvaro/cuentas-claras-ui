@@ -19,6 +19,7 @@ interface MonthStore {
   ) => Promise<void>;
   deleteMonthExpense: (monthExpenseId: number) => Promise<void>;
   deleteMonthIncome: (monthIncomeId: number) => Promise<void>;
+  addMonthExpense: (expenseId: number) => Promise<void>;
 }
 
 export const useMonthStore = create<MonthStore>((set, get) => ({
@@ -85,6 +86,13 @@ export const useMonthStore = create<MonthStore>((set, get) => ({
     const month = get().month;
     const { data } = await axios.delete(
       `http://localhost:3000/api/months/${month?.id}/deleteMonthIncome/${monthIncomeId}`
+    );
+    set({ month: data });
+  },
+  addMonthExpense: async (expenseId: number) => {
+    const month = get().month;
+    const { data } = await axios.post(
+      `http://localhost:3000/api/months/${month?.id}/addExpense/${expenseId}`
     );
     set({ month: data });
   },

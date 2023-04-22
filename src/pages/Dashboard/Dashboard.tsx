@@ -10,11 +10,18 @@ import {
   onUpdateMonthExpenseProps,
 } from "./MonthExpensesTable";
 import { useMonthStore } from "../../stores/months.store";
-import { MonthExpense, MonthIncome } from "../../interfaces/months.interface";
+import {
+  MonthExpense,
+  MonthIncome,
+  isMonthExpense,
+  isMonthIncome,
+} from "../../interfaces/months.interface";
 import {
   MonthIncomesTable,
   onUpdateIncomeProps,
 } from "./MonthIncomesTable/MonthIncomesTable";
+import { ConfirmDialog } from "../../components/ConfirmDialog";
+import { Expense } from "../../interfaces/expenses.interface";
 
 export const Dashboard: React.FC = () => {
   const month = useMonthStore((state) => state.month);
@@ -24,6 +31,7 @@ export const Dashboard: React.FC = () => {
   const updateMonthExpense = useMonthStore((state) => state.updateMonthExpense);
   const deleteMonthExpense = useMonthStore((state) => state.deleteMonthExpense);
   const deleteMonthIncome = useMonthStore((state) => state.deleteMonthIncome);
+  const addMonthExpense = useMonthStore((state) => state.addMonthExpense);
 
   const [selectedMonth, setSelectedMonth] = useState(
     `${new Date().getFullYear()}-${(new Date().getMonth() + 1)
@@ -31,6 +39,11 @@ export const Dashboard: React.FC = () => {
       .padStart(2, "0")}-00`
   );
   const [showOpenMonth, setShowOpenMonth] = useState(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [confirmDialogText, setConfirmDialogText] = useState("");
+  const [monthElementToDelete, setMonthElementToDelete] = useState<
+    MonthExpense | MonthIncome
+  >();
 
   useEffect(() => {
     loadMonthByDate(selectedMonth).catch(() => {
@@ -72,10 +85,30 @@ export const Dashboard: React.FC = () => {
     setSelectedMonth(e.target.value);
   };
 
-  const handleOnDeleteMonthExpense = (monthExpense: MonthExpense) =>
-    deleteMonthExpense(monthExpense.id);
-  const handleOnDeleteMonthIncome = (monthIncome: MonthIncome) =>
-    deleteMonthIncome(monthIncome.id);
+  const handleOnDeleteMonthExpense = (monthExpense: MonthExpense) => {
+    setShowConfirmDialog(true);
+    setConfirmDialogText(
+      "Está seguro de eliminar el gasto: " + monthExpense.expense.name
+    );
+    setMonthElementToDelete(monthExpense);
+  };
+  const handleOnDeleteMonthIncome = (monthIncome: MonthIncome) => {
+    setShowConfirmDialog(true);
+    setConfirmDialogText(
+      "Está seguro de eliminar el ingreo: " + monthIncome.income.name
+    );
+    setMonthElementToDelete(monthIncome);
+  };
+  const handleOnDialogConfirm = () => {
+    if (isMonthIncome(monthElementToDelete)) {
+      deleteMonthIncome(monthElementToDelete.id);
+    }
+    if (isMonthExpense(monthElementToDelete)) {
+      deleteMonthExpense(monthElementToDelete.id);
+    }
+    setShowConfirmDialog(false);
+  };
+
   const handleUpdateMonthIncome = ({
     amount,
     received,
@@ -94,6 +127,10 @@ export const Dashboard: React.FC = () => {
 
   const handleOnOpenMonth = () => {
     openMonth(selectedMonth);
+  };
+
+  const handleAddMonthExpense = (expense: Expense) => {
+    addMonthExpense(expense.id);
   };
 
   return (
@@ -146,6 +183,7 @@ export const Dashboard: React.FC = () => {
                   monthExpenses={month.monthExpenses}
                   onUpdateMonthExpense={handleUpdateMonthExpense}
                   onDeleteMonthExpense={handleOnDeleteMonthExpense}
+                  onAddMonthExpense={handleAddMonthExpense}
                   totalExpenses={month.totalExpenses}
                   totalUnpaid={month.totalUnpaid}
                 />
@@ -167,6 +205,12 @@ export const Dashboard: React.FC = () => {
           </Row>
         </Card.Body>
       </Card>
+      <ConfirmDialog
+        show={showConfirmDialog}
+        setShow={setShowConfirmDialog}
+        onConfirm={handleOnDialogConfirm}
+        text={confirmDialogText}
+      />
     </>
   );
 };
