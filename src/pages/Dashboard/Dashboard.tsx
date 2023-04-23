@@ -13,6 +13,7 @@ import { useMonthStore } from "../../stores/months.store";
 import {
   MonthExpense,
   MonthIncome,
+  MonthStatus,
   isMonthExpense,
   isMonthIncome,
 } from "../../interfaces/months.interface";
@@ -28,6 +29,7 @@ export const Dashboard: React.FC = () => {
   const month = useMonthStore((state) => state.month);
   const loadMonthByDate = useMonthStore((state) => state.loadMonthByDate);
   const openMonth = useMonthStore((state) => state.openMonth);
+  const closeMonth = useMonthStore((state) => state.closeMonth);
   const updateMonthIncome = useMonthStore((state) => state.updateMonthIncome);
   const updateMonthExpense = useMonthStore((state) => state.updateMonthExpense);
   const deleteMonthExpense = useMonthStore((state) => state.deleteMonthExpense);
@@ -102,11 +104,14 @@ export const Dashboard: React.FC = () => {
     setMonthElementToDelete(monthIncome);
   };
   const handleOnDialogConfirm = () => {
-    if (isMonthIncome(monthElementToDelete)) {
-      deleteMonthIncome(monthElementToDelete.id);
-    }
-    if (isMonthExpense(monthElementToDelete)) {
-      deleteMonthExpense(monthElementToDelete.id);
+    if (monthElementToDelete) {
+      if (isMonthIncome(monthElementToDelete)) {
+        deleteMonthIncome(monthElementToDelete.id);
+      } else if (isMonthExpense(monthElementToDelete)) {
+        deleteMonthExpense(monthElementToDelete.id);
+      }
+    } else {
+      closeMonth();
     }
     setShowConfirmDialog(false);
   };
@@ -139,6 +144,19 @@ export const Dashboard: React.FC = () => {
     addMonthIncome(income.id);
   };
 
+  const handleOnCloseMonth = () => {
+    const isAllExpensesPaid = month?.monthExpenses.every(
+      (monthExpense) => monthExpense.paid
+    );
+    setShowConfirmDialog(true);
+    setConfirmDialogText(
+      isAllExpensesPaid
+        ? "Está seguro que desea cerrar el mes?"
+        : "Aún hay gastos por pagar, está seguro que desea cerrar el mes?"
+    );
+    setMonthElementToDelete(undefined);
+  };
+
   return (
     <>
       <h1 className="mt-4">Pandel de Inicio</h1>
@@ -168,6 +186,15 @@ export const Dashboard: React.FC = () => {
                 >
                   Abrir Mes
                 </Button>
+                <Button
+                  className="me-1"
+                  variant="danger"
+                  size="lg"
+                  hidden={!month || month?.status === MonthStatus.CLOSE}
+                  onClick={handleOnCloseMonth}
+                >
+                  Cerrar Mes
+                </Button>
               </div>
               <div>
                 <Form.Select
@@ -192,6 +219,7 @@ export const Dashboard: React.FC = () => {
                   onAddMonthExpense={handleAddMonthExpense}
                   totalExpenses={month.totalExpenses}
                   totalUnpaid={month.totalUnpaid}
+                  monthStatus={month.status}
                 />
               )}
             </Col>
@@ -206,6 +234,7 @@ export const Dashboard: React.FC = () => {
                   currentBalance={month.currentBalance}
                   difference={month.difference}
                   totalRows={month.monthExpenses.length}
+                  monthStatus={month.status}
                 />
               )}
             </Col>

@@ -6,7 +6,7 @@ import {
   Table,
   Tooltip,
 } from "react-bootstrap";
-import { MonthIncome } from "../../../interfaces/months.interface";
+import { MonthIncome, MonthStatus } from "../../../interfaces/months.interface";
 import { currencyFormat } from "../../../utils/currency-format";
 import { ChangeEvent, useState } from "react";
 import { MonthIncomeAddRow } from "../MonthIncomeAddRow";
@@ -27,6 +27,7 @@ interface MonthIncomeTableProps {
   currentBalance: number;
   difference: number;
   totalRows: number;
+  monthStatus: MonthStatus;
 }
 
 export const MonthIncomesTable: React.FC<MonthIncomeTableProps> = ({
@@ -38,6 +39,7 @@ export const MonthIncomesTable: React.FC<MonthIncomeTableProps> = ({
   currentBalance,
   difference,
   totalRows,
+  monthStatus,
 }) => {
   const [editMonthIncome, setEditMonthIncome] = useState<MonthIncome>();
   const [editAmountInput, setEditAmountInput] = useState<number>(0);
@@ -127,48 +129,52 @@ export const MonthIncomesTable: React.FC<MonthIncomeTableProps> = ({
                   )}
                 </td>
                 <td>
-                  {editMonthIncome && editMonthIncome.id === monthIncome.id ? (
-                    <Button
-                      size="sm"
-                      className="me-1"
-                      variant="success"
-                      onClick={() => handleSaveEditMonthIncome()}
-                      as="span"
-                    >
-                      <i className="fas fa-check"></i>
-                    </Button>
-                  ) : (
-                    <Button
-                      size="sm"
-                      className="me-1"
-                      onClick={() => handleEditMonthIncome(monthIncome)}
-                    >
-                      <i className="fas fa-edit"></i>
-                    </Button>
-                  )}
-                  {editMonthIncome && editMonthIncome.id === monthIncome.id ? (
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      onClick={handleCancelEditMonthIncome}
-                      as="span"
-                    >
-                      <i className="fas fa-xmark"></i>
-                    </Button>
-                  ) : (
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      onClick={() => onDeleteMonthIncome(monthIncome)}
-                    >
-                      <i className="fas fa-trash"></i>
-                    </Button>
-                  )}
+                  {monthStatus === MonthStatus.OPEN &&
+                    (editMonthIncome &&
+                    editMonthIncome.id === monthIncome.id ? (
+                      <Button
+                        size="sm"
+                        className="me-1"
+                        variant="success"
+                        onClick={() => handleSaveEditMonthIncome()}
+                        as="span"
+                      >
+                        <i className="fas fa-check"></i>
+                      </Button>
+                    ) : (
+                      <Button
+                        size="sm"
+                        className="me-1"
+                        onClick={() => handleEditMonthIncome(monthIncome)}
+                      >
+                        <i className="fas fa-edit"></i>
+                      </Button>
+                    ))}
+                  {monthStatus === MonthStatus.OPEN &&
+                    (editMonthIncome &&
+                    editMonthIncome.id === monthIncome.id ? (
+                      <Button
+                        variant="danger"
+                        size="sm"
+                        onClick={handleCancelEditMonthIncome}
+                        as="span"
+                      >
+                        <i className="fas fa-xmark"></i>
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="danger"
+                        size="sm"
+                        onClick={() => onDeleteMonthIncome(monthIncome)}
+                      >
+                        <i className="fas fa-trash"></i>
+                      </Button>
+                    ))}
                 </td>
               </tr>
             );
           })}
-        {monthIncomes && (
+        {monthStatus === MonthStatus.OPEN && monthIncomes && (
           <MonthIncomeAddRow
             monthIncomes={monthIncomes}
             onAddMonthIncome={onAddMonthIncome}

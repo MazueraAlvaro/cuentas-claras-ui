@@ -7,6 +7,7 @@ interface MonthStore {
   loadMonthByDate: (date: string) => Promise<void>;
   loadMonthById: (id: number) => void;
   openMonth: (month: string) => Promise<void>;
+  closeMonth: () => Promise<void>;
   updateMonthIncome: (
     monthIncomeId: number,
     amount: number,
@@ -45,6 +46,15 @@ export const useMonthStore = create<MonthStore>((set, get) => ({
       "http://localhost:3000/api/months/generate/" + month
     );
     set({ month: data });
+  },
+  closeMonth: async () => {
+    const month = get().month;
+    if (month) {
+      const { data } = await axios.post(
+        "http://localhost:3000/api/months/close/" + month.id
+      );
+      set({ month: data });
+    }
   },
   updateMonthIncome: async (
     monthIncomeId: number,
