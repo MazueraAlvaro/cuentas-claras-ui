@@ -1,0 +1,9 @@
+version: "3.9"
+
+services:
+  cuenstas-claras-ui:
+    build: .
+    image: mazueraalvaro/cuentas-claras-ui:latest
+    env_file: .env
+    ports:
+      - 4000:8080

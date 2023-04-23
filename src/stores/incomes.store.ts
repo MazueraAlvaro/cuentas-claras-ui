@@ -11,7 +11,9 @@ interface IncomesStore {
 export const useIncomesStore = create<IncomesStore>((set, get) => ({
   incomes: [],
   loadIncomes: async () => {
-    const { data } = await axios.get("http://localhost:3000/api/incomes");
+    const { data } = await axios.get(
+      `${process.env.REACT_APP_API_URL}/api/incomes`
+    );
     set({ incomes: data });
   },
   addIncome: (income: Income) => {

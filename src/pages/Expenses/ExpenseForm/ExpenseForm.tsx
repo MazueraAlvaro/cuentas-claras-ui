@@ -79,7 +79,7 @@ export const ExpenseForm: React.FC<ExpenseFormProps> = ({
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/api/expenses/types")
+      .get(`${process.env.REACT_APP_API_URL}/api/expenses/types`)
       .then(({ data }) => setExpenseTypes(data));
   }, []);
 

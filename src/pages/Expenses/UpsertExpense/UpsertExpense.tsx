@@ -31,7 +31,7 @@ export const UpsertExpense: React.FC<UpsertExpenseProps> = ({
       endAt: values.endAt === "" ? null : values.endAt,
     };
 
-    const url = `http://localhost:3000/api/expenses${
+    const url = `${process.env.REACT_APP_API_URL}/api/expenses${
       expense ? "/" + expense.id : ""
     }`;
 

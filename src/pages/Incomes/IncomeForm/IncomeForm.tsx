@@ -68,7 +68,7 @@ export const IncomeForm: React.FC<IncomeFormProps> = ({ income, onSubmit }) => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/api/incomes/types")
+      .get(`${process.env.REACT_APP_API_URL}/api/incomes/types`)
       .then(({ data }) => setIncomeTypes(data));
   }, []);
 

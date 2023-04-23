@@ -54,7 +54,7 @@ export const Incomes: React.FC = () => {
   const handleOnDialogConfirm = async () => {
     if (incomeToDelete) {
       await axios.delete(
-        "http://localhost:3000/api/incomes/" + incomeToDelete.id
+        `${process.env.REACT_APP_API_URL}/api/incomes/` + incomeToDelete.id
       );
       setShowConfirmDialog(false);
       setAlertData({

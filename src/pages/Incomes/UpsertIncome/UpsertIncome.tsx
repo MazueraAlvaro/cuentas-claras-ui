@@ -31,7 +31,7 @@ export const UpsertIncome: React.FC<UpsertIncomeProps> = ({
       endAt: values.endAt === "" ? null : values.endAt,
     };
 
-    const url = `http://localhost:3000/api/incomes${
+    const url = `${process.env.REACT_APP_API_URL}/api/incomes${
       income ? "/" + income.id : ""
     }`;
 

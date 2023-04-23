@@ -11,7 +11,9 @@ interface ExpensesStore {
 export const useExpensesStore = create<ExpensesStore>((set, get) => ({
   expenses: [],
   loadExpenses: async () => {
-    const { data } = await axios.get("http://localhost:3000/api/expenses");
+    const { data } = await axios.get(
+      `${process.env.REACT_APP_API_URL}/api/expenses`
+    );
     set({ expenses: data });
   },
   addExpense: (expense: Expense) => {

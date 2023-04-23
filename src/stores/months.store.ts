@@ -29,7 +29,7 @@ export const useMonthStore = create<MonthStore>((set, get) => ({
   loadMonthByDate: async (date) => {
     try {
       const { data } = await axios.get(
-        "http://localhost:3000/api/months/byDate/" + date
+        `${process.env.REACT_APP_API_URL}/api/months/byDate/` + date
       );
       set({ month: data });
     } catch (error) {
@@ -38,12 +38,14 @@ export const useMonthStore = create<MonthStore>((set, get) => ({
     }
   },
   loadMonthById: async (id) => {
-    const { data } = await axios.get("http://localhost:3000/api/months/" + id);
+    const { data } = await axios.get(
+      `${process.env.REACT_APP_API_URL}/api/months/` + id
+    );
     set({ month: data });
   },
   openMonth: async (month: string) => {
     const { data } = await axios.post(
-      "http://localhost:3000/api/months/generate/" + month
+      `${process.env.REACT_APP_API_URL}/api/months/generate/` + month
     );
     set({ month: data });
   },
@@ -51,7 +53,7 @@ export const useMonthStore = create<MonthStore>((set, get) => ({
     const month = get().month;
     if (month) {
       const { data } = await axios.post(
-        "http://localhost:3000/api/months/close/" + month.id
+        `${process.env.REACT_APP_API_URL}/api/months/close/` + month.id
       );
       set({ month: data });
     }
@@ -63,7 +65,7 @@ export const useMonthStore = create<MonthStore>((set, get) => ({
   ) => {
     const month = get().month;
     const { data } = await axios.patch(
-      `http://localhost:3000/api/months/${month?.id}/monthIncomes/${monthIncomeId}`,
+      `${process.env.REACT_APP_API_URL}/api/months/${month?.id}/monthIncomes/${monthIncomeId}`,
       {
         amount,
         received,
@@ -78,7 +80,7 @@ export const useMonthStore = create<MonthStore>((set, get) => ({
   ) => {
     const month = get().month;
     const { data } = await axios.patch(
-      `http://localhost:3000/api/months/${month?.id}/monthExpenses/${monthExpenseId}`,
+      `${process.env.REACT_APP_API_URL}/api/months/${month?.id}/monthExpenses/${monthExpenseId}`,
       {
         amount,
         paid,
@@ -89,28 +91,28 @@ export const useMonthStore = create<MonthStore>((set, get) => ({
   deleteMonthExpense: async (monthExpenseId: number) => {
     const month = get().month;
     const { data } = await axios.delete(
-      `http://localhost:3000/api/months/${month?.id}/deleteMonthExpense/${monthExpenseId}`
+      `${process.env.REACT_APP_API_URL}/api/months/${month?.id}/deleteMonthExpense/${monthExpenseId}`
     );
     set({ month: data });
   },
   deleteMonthIncome: async (monthIncomeId: number) => {
     const month = get().month;
     const { data } = await axios.delete(
-      `http://localhost:3000/api/months/${month?.id}/deleteMonthIncome/${monthIncomeId}`
+      `${process.env.REACT_APP_API_URL}/api/months/${month?.id}/deleteMonthIncome/${monthIncomeId}`
     );
     set({ month: data });
   },
   addMonthExpense: async (expenseId: number) => {
     const month = get().month;
     const { data } = await axios.post(
-      `http://localhost:3000/api/months/${month?.id}/addExpense/${expenseId}`
+      `${process.env.REACT_APP_API_URL}/api/months/${month?.id}/addExpense/${expenseId}`
     );
     set({ month: data });
   },
   addMonthIncome: async (incomeId: number) => {
     const month = get().month;
     const { data } = await axios.post(
-      `http://localhost:3000/api/months/${month?.id}/addIncome/${incomeId}`
+      `${process.env.REACT_APP_API_URL}/api/months/${month?.id}/addIncome/${incomeId}`
     );
     set({ month: data });
   },

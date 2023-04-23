@@ -54,7 +54,7 @@ export const Expenses: React.FC = () => {
   const handleOnDialogConfirm = async () => {
     if (expenseToDelete) {
       await axios.delete(
-        "http://localhost:3000/api/expenses/" + expenseToDelete.id
+        `${process.env.REACT_APP_API_URL}/api/expenses/` + expenseToDelete.id
       );
       setShowConfirmDialog(false);
       setAlertData({
