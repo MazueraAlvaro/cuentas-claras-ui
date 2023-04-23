@@ -8,9 +8,9 @@ import {
 } from "react-bootstrap";
 import { MonthExpense } from "../../../interfaces/months.interface";
 import { currencyFormat } from "../../../utils/currency-format";
-import { ChangeEvent, useEffect, useState } from "react";
-import { useExpensesStore } from "../../../stores/expenses.store";
+import { ChangeEvent, useState } from "react";
 import { Expense } from "../../../interfaces/expenses.interface";
+import { MonthExpenseAddRow } from "../MonthExpenseAddRow";
 
 export interface onUpdateMonthExpenseProps {
   monthExpense: MonthExpense;
@@ -35,9 +35,6 @@ export const MonthExpensesTable: React.FC<MonthExpenseTableProps> = ({
   totalExpenses,
   totalUnpaid,
 }) => {
-  //Stores
-  const loadExpenses = useExpensesStore((state) => state.loadExpenses);
-  const expenses = useExpensesStore((state) => state.expenses);
   //States
   const [editMonthExpense, setEditMonthExpense] = useState<MonthExpense>();
   const [editAmountInput, setEditAmountInput] = useState<number>(0);
@@ -46,36 +43,6 @@ export const MonthExpensesTable: React.FC<MonthExpenseTableProps> = ({
     setEditMonthExpense(monthExpense);
     setEditAmountInput(monthExpense.amount);
     setEditpaidInput(monthExpense.paid);
-  };
-  const [showAddMonthExpense, setShowAddMonthExpense] = useState(false);
-  const [selectedExpense, setSelectedExpense] = useState<Expense>();
-  const [filteredExpenses, setFilteredExpenses] = useState<Expense[]>();
-
-  useEffect(() => {
-    if (expenses) {
-      const filteredOptions = expenses.filter(
-        (expense: Expense) =>
-          !monthExpenses.some(
-            (monthExpense) => monthExpense.expense.id === expense.id
-          )
-      );
-      setFilteredExpenses(filteredOptions);
-      setSelectedExpense(filteredOptions[0]);
-    }
-  }, [expenses, monthExpenses]);
-
-  //Helpers
-  const buildExpensesOptions = () => {
-    return (
-      <>
-        {filteredExpenses &&
-          filteredExpenses.map((expense) => (
-            <option key={expense.id} value={expense.id}>
-              {expense.name}
-            </option>
-          ))}
-      </>
-    );
   };
 
   //Handlers
@@ -98,23 +65,7 @@ export const MonthExpensesTable: React.FC<MonthExpenseTableProps> = ({
   const handleCancelEditMonthIncome = () => {
     setEditMonthExpense(undefined);
   };
-  const handleAddMonthExpense = () => {
-    loadExpenses();
-    setShowAddMonthExpense(true);
-  };
-  const handleConfirmAddMonthExpense = () => {
-    if (selectedExpense) onAddMonthExpense(selectedExpense);
-    setShowAddMonthExpense(false);
-  };
-  const handleCancelAddMonthExpense = () => {
-    setShowAddMonthExpense(false);
-  };
-  const handleChangeExpense = (e: ChangeEvent<HTMLSelectElement>) => {
-    const expense = expenses.find(
-      (expense) => parseInt(e.target.value) === expense.id
-    );
-    setSelectedExpense(expense);
-  };
+
   return (
     <Table>
       <thead>
@@ -219,57 +170,10 @@ export const MonthExpensesTable: React.FC<MonthExpenseTableProps> = ({
             );
           })}
         {monthExpenses && (
-          <tr>
-            <td>{showAddMonthExpense && monthExpenses.length + 1}</td>
-            <td>
-              {showAddMonthExpense && (
-                <Form.Select
-                  value={selectedExpense?.id}
-                  onChange={handleChangeExpense}
-                >
-                  {buildExpensesOptions()}
-                </Form.Select>
-              )}
-            </td>
-            <td>
-              {showAddMonthExpense &&
-                selectedExpense &&
-                currencyFormat(selectedExpense.amount)}
-            </td>
-            <td></td>
-            <td>
-              {!showAddMonthExpense ? (
-                <Button
-                  size="sm"
-                  className="me-1"
-                  variant="success"
-                  as="span"
-                  onClick={handleAddMonthExpense}
-                >
-                  <i className="fas fa-plus"></i>
-                </Button>
-              ) : (
-                <>
-                  <Button
-                    size="sm"
-                    className="me-1"
-                    variant="success"
-                    onClick={handleConfirmAddMonthExpense}
-                  >
-                    <i className="fas fa-check"></i>
-                  </Button>
-                  <Button
-                    size="sm"
-                    className="me-1"
-                    variant="danger"
-                    onClick={handleCancelAddMonthExpense}
-                  >
-                    <i className="fas fa-xmark"></i>
-                  </Button>
-                </>
-              )}
-            </td>
-          </tr>
+          <MonthExpenseAddRow
+            onAddMonthExpense={onAddMonthExpense}
+            monthExpenses={monthExpenses}
+          />
         )}
       </tbody>
       <tfoot>
