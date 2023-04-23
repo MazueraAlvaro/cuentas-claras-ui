@@ -22,6 +22,7 @@ import {
 } from "./MonthIncomesTable/MonthIncomesTable";
 import { ConfirmDialog } from "../../components/ConfirmDialog";
 import { Expense } from "../../interfaces/expenses.interface";
+import { Income } from "../../interfaces/incomes.interface";
 
 export const Dashboard: React.FC = () => {
   const month = useMonthStore((state) => state.month);
@@ -32,6 +33,7 @@ export const Dashboard: React.FC = () => {
   const deleteMonthExpense = useMonthStore((state) => state.deleteMonthExpense);
   const deleteMonthIncome = useMonthStore((state) => state.deleteMonthIncome);
   const addMonthExpense = useMonthStore((state) => state.addMonthExpense);
+  const addMonthIncome = useMonthStore((state) => state.addMonthIncome);
 
   const [selectedMonth, setSelectedMonth] = useState(
     `${new Date().getFullYear()}-${(new Date().getMonth() + 1)
@@ -133,6 +135,10 @@ export const Dashboard: React.FC = () => {
     addMonthExpense(expense.id);
   };
 
+  const handleAddMonthIncome = (income: Income) => {
+    addMonthIncome(income.id);
+  };
+
   return (
     <>
       <h1 className="mt-4">Pandel de Inicio</h1>
@@ -195,6 +201,7 @@ export const Dashboard: React.FC = () => {
                   monthIncomes={month.monthIncomes}
                   onDeleteMonthIncome={handleOnDeleteMonthIncome}
                   onUpdateMonthIncome={handleUpdateMonthIncome}
+                  onAddMonthIncome={handleAddMonthIncome}
                   totalIncomes={month.totalIncomes}
                   currentBalance={month.currentBalance}
                   difference={month.difference}

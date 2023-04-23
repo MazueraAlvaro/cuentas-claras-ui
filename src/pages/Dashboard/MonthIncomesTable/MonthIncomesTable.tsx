@@ -9,6 +9,8 @@ import {
 import { MonthIncome } from "../../../interfaces/months.interface";
 import { currencyFormat } from "../../../utils/currency-format";
 import { ChangeEvent, useState } from "react";
+import { MonthIncomeAddRow } from "../MonthIncomeAddRow";
+import { Income } from "../../../interfaces/incomes.interface";
 
 export interface onUpdateIncomeProps {
   monthIncome: MonthIncome;
@@ -20,6 +22,7 @@ interface MonthIncomeTableProps {
   monthIncomes: MonthIncome[];
   onUpdateMonthIncome: (data: onUpdateIncomeProps) => void;
   onDeleteMonthIncome: (monthIncome: MonthIncome) => void;
+  onAddMonthIncome: (monthIncome: Income) => void;
   totalIncomes: number;
   currentBalance: number;
   difference: number;
@@ -30,6 +33,7 @@ export const MonthIncomesTable: React.FC<MonthIncomeTableProps> = ({
   monthIncomes,
   onUpdateMonthIncome,
   onDeleteMonthIncome,
+  onAddMonthIncome,
   totalIncomes,
   currentBalance,
   difference,
@@ -164,6 +168,12 @@ export const MonthIncomesTable: React.FC<MonthIncomeTableProps> = ({
               </tr>
             );
           })}
+        {monthIncomes && (
+          <MonthIncomeAddRow
+            monthIncomes={monthIncomes}
+            onAddMonthIncome={onAddMonthIncome}
+          />
+        )}
         {monthIncomes &&
           Array.from({ length: totalRows - monthIncomes.length }).map(
             (_, index) => (
