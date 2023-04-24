@@ -86,6 +86,7 @@ export const MonthExpenseAddRow: React.FC<MonthExpenseAddRowProps> = ({
           currencyFormat(selectedExpense.amount)}
       </td>
       <td></td>
+      <td></td>
       <td>
         {!showAddMonthExpense ? (
           <Button

@@ -128,8 +128,9 @@ export const Dashboard: React.FC = () => {
     amount,
     paid,
     monthExpense,
+    creditCard,
   }: onUpdateMonthExpenseProps) => {
-    updateMonthExpense(monthExpense.id, amount, paid);
+    updateMonthExpense(monthExpense.id, amount, paid, creditCard);
   };
 
   const handleOnOpenMonth = () => {

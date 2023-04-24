@@ -16,7 +16,8 @@ interface MonthStore {
   updateMonthExpense: (
     monthExpenseId: number,
     amount: number,
-    paid: boolean
+    paid: boolean,
+    creditCard: boolean
   ) => Promise<void>;
   deleteMonthExpense: (monthExpenseId: number) => Promise<void>;
   deleteMonthIncome: (monthIncomeId: number) => Promise<void>;
@@ -76,7 +77,8 @@ export const useMonthStore = create<MonthStore>((set, get) => ({
   updateMonthExpense: async (
     monthExpenseId: number,
     amount: number,
-    paid: boolean
+    paid: boolean,
+    creditCard: boolean
   ) => {
     const month = get().month;
     const { data } = await axios.patch(
@@ -84,6 +86,7 @@ export const useMonthStore = create<MonthStore>((set, get) => ({
       {
         amount,
         paid,
+        creditCard,
       }
     );
     set({ month: data });

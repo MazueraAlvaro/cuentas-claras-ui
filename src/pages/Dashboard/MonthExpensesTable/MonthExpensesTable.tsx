@@ -19,6 +19,7 @@ export interface onUpdateMonthExpenseProps {
   monthExpense: MonthExpense;
   amount: number;
   paid: boolean;
+  creditCard: boolean;
 }
 
 interface MonthExpenseTableProps {
@@ -43,11 +44,13 @@ export const MonthExpensesTable: React.FC<MonthExpenseTableProps> = ({
   //States
   const [editMonthExpense, setEditMonthExpense] = useState<MonthExpense>();
   const [editAmountInput, setEditAmountInput] = useState<number>(0);
-  const [editPaidInput, setEditpaidInput] = useState<boolean>(false);
+  const [editPaidInput, setEditpaidInput] = useState(false);
+  const [editCreditCardInput, setEditCreditCardInput] = useState(false);
   const handleEditMonthIncome = (monthExpense: MonthExpense) => {
     setEditMonthExpense(monthExpense);
     setEditAmountInput(monthExpense.amount);
     setEditpaidInput(monthExpense.paid);
+    setEditCreditCardInput(monthExpense.creditCard);
   };
 
   //Handlers
@@ -57,12 +60,16 @@ export const MonthExpensesTable: React.FC<MonthExpenseTableProps> = ({
   const handlePaidInput = (e: ChangeEvent<HTMLInputElement>) => {
     setEditpaidInput(e.target.checked);
   };
+  const handleCreditCardInput = (e: ChangeEvent<HTMLInputElement>) => {
+    setEditCreditCardInput(e.target.checked);
+  };
   const handleSaveEditMonthIncome = () => {
     if (editMonthExpense) {
       onUpdateMonthExpense({
         monthExpense: editMonthExpense,
         amount: editAmountInput,
         paid: editPaidInput,
+        creditCard: editCreditCardInput,
       });
     }
     setEditMonthExpense(undefined);
@@ -75,7 +82,7 @@ export const MonthExpensesTable: React.FC<MonthExpenseTableProps> = ({
     <Table>
       <thead>
         <tr>
-          <th colSpan={5} className="text-center">
+          <th colSpan={6} className="text-center">
             <h5>Gastos</h5>
           </th>
         </tr>
@@ -84,6 +91,7 @@ export const MonthExpensesTable: React.FC<MonthExpenseTableProps> = ({
           <th>Nombre</th>
           <th>Cantidad</th>
           <th>Pagado</th>
+          <th>TC</th>
           <th>Acciones</th>
         </tr>
       </thead>
@@ -118,7 +126,7 @@ export const MonthExpensesTable: React.FC<MonthExpenseTableProps> = ({
                 <td>
                   {editMonthExpense &&
                   editMonthExpense.id === monthExpense.id ? (
-                    <Form.Check // prettier-ignore
+                    <Form.Check
                       type="switch"
                       className="mt-2"
                       checked={editPaidInput}
@@ -127,6 +135,24 @@ export const MonthExpensesTable: React.FC<MonthExpenseTableProps> = ({
                   ) : (
                     <Badge pill bg={monthExpense.paid ? "success" : "danger"}>
                       {monthExpense.paid ? "SI" : "NO"}
+                    </Badge>
+                  )}
+                </td>
+                <td>
+                  {editMonthExpense &&
+                  editMonthExpense.id === monthExpense.id ? (
+                    <Form.Check
+                      type="switch"
+                      className="mt-2"
+                      checked={editCreditCardInput}
+                      onChange={handleCreditCardInput}
+                    />
+                  ) : (
+                    <Badge
+                      pill
+                      bg={monthExpense.creditCard ? "primary" : "secondary"}
+                    >
+                      {monthExpense.creditCard ? "SI" : "NO"}
                     </Badge>
                   )}
                 </td>
