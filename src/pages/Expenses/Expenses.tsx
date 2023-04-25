@@ -6,6 +6,7 @@ import { UpsertExpense } from "./UpsertExpense";
 import { Expense } from "../../interfaces/expenses.interface";
 import { ConfirmDialog } from "../../components/ConfirmDialog";
 import axios from "axios";
+import { env } from "../../config/env";
 
 export const Expenses: React.FC = () => {
   const loadExpenses = useExpensesStore((state) => state.loadExpenses);
@@ -54,7 +55,7 @@ export const Expenses: React.FC = () => {
   const handleOnDialogConfirm = async () => {
     if (expenseToDelete) {
       await axios.delete(
-        `${process.env.REACT_APP_API_URL}/api/expenses/` + expenseToDelete.id
+        `${env?.REACT_APP_API_URL}/api/expenses/` + expenseToDelete.id
       );
       setShowConfirmDialog(false);
       setAlertData({

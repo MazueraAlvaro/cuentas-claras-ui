@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import axios from "axios";
 import { Income } from "../interfaces/incomes.interface";
+import { env } from "../config/env";
 
 interface IncomesStore {
   incomes: Income[];
@@ -11,9 +12,7 @@ interface IncomesStore {
 export const useIncomesStore = create<IncomesStore>((set, get) => ({
   incomes: [],
   loadIncomes: async () => {
-    const { data } = await axios.get(
-      `${process.env.REACT_APP_API_URL}/api/incomes`
-    );
+    const { data } = await axios.get(`${env?.REACT_APP_API_URL}/api/incomes`);
     set({ incomes: data });
   },
   addIncome: (income: Income) => {

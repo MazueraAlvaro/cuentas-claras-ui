@@ -6,6 +6,7 @@ import { IncomesTable } from "./IncomesTable";
 import { ConfirmDialog } from "../../components/ConfirmDialog";
 import axios from "axios";
 import { UpsertIncome } from "./UpsertIncome";
+import { env } from "../../config/env";
 
 export const Incomes: React.FC = () => {
   const loadIncomes = useIncomesStore((state) => state.loadIncomes);
@@ -54,7 +55,7 @@ export const Incomes: React.FC = () => {
   const handleOnDialogConfirm = async () => {
     if (incomeToDelete) {
       await axios.delete(
-        `${process.env.REACT_APP_API_URL}/api/incomes/` + incomeToDelete.id
+        `${env?.REACT_APP_API_URL}/api/incomes/` + incomeToDelete.id
       );
       setShowConfirmDialog(false);
       setAlertData({

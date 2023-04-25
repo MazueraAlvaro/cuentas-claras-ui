@@ -9,6 +9,7 @@ import {
   ExpenseInitialValues,
   ExpenseType,
 } from "../../../interfaces/expenses.interface";
+import { env } from "../../../config/env";
 
 interface ExpenseFormProps {
   expense: Expense | null;
@@ -79,7 +80,7 @@ export const ExpenseForm: React.FC<ExpenseFormProps> = ({
 
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_API_URL}/api/expenses/types`)
+      .get(`${env?.REACT_APP_API_URL}/api/expenses/types`)
       .then(({ data }) => setExpenseTypes(data));
   }, []);
 

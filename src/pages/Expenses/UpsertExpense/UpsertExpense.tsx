@@ -6,6 +6,7 @@ import {
   ExpenseInitialValues,
 } from "../../../interfaces/expenses.interface";
 import axios from "axios";
+import { env } from "../../../config/env";
 
 interface UpsertExpenseProps {
   show: boolean;
@@ -31,7 +32,7 @@ export const UpsertExpense: React.FC<UpsertExpenseProps> = ({
       endAt: values.endAt === "" ? null : values.endAt,
     };
 
-    const url = `${process.env.REACT_APP_API_URL}/api/expenses${
+    const url = `${env?.REACT_APP_API_URL}/api/expenses${
       expense ? "/" + expense.id : ""
     }`;
 

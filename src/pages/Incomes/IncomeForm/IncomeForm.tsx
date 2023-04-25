@@ -9,6 +9,7 @@ import {
   IncomeInitialValues,
   IncomeType,
 } from "../../../interfaces/incomes.interface";
+import { env } from "../../../config/env";
 
 interface IncomeFormProps {
   income: Income | null;
@@ -68,7 +69,7 @@ export const IncomeForm: React.FC<IncomeFormProps> = ({ income, onSubmit }) => {
 
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_API_URL}/api/incomes/types`)
+      .get(`${env?.REACT_APP_API_URL}/api/incomes/types`)
       .then(({ data }) => setIncomeTypes(data));
   }, []);
 

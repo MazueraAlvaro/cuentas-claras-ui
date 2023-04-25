@@ -6,6 +6,7 @@ import {
   Income,
   IncomeInitialValues,
 } from "../../../interfaces/incomes.interface";
+import { env } from "../../../config/env";
 
 interface UpsertIncomeProps {
   show: boolean;
@@ -31,7 +32,7 @@ export const UpsertIncome: React.FC<UpsertIncomeProps> = ({
       endAt: values.endAt === "" ? null : values.endAt,
     };
 
-    const url = `${process.env.REACT_APP_API_URL}/api/incomes${
+    const url = `${env?.REACT_APP_API_URL}/api/incomes${
       income ? "/" + income.id : ""
     }`;
 
