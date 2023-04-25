@@ -28,6 +28,7 @@ export const Incomes: React.FC = () => {
 
   const handleSuccessCreate = (income: Income) => {
     if (upsertIncome) {
+      setUpsertIncome(null);
       loadIncomes();
     } else {
       addIncome(income);

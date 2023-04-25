@@ -29,6 +29,7 @@ export const Expenses: React.FC = () => {
   const handleSuccessCreate = (expense: Expense) => {
     if (upsertExpense) {
       loadExpenses();
+      setUpsertExpense(null);
     } else {
       addExpense(expense);
     }
