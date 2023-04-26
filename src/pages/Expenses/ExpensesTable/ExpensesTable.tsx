@@ -1,6 +1,7 @@
 import { Badge, Button, OverlayTrigger, Table, Tooltip } from "react-bootstrap";
 import { useExpensesStore } from "../../../stores/expenses.store";
 import { Expense } from "../../../interfaces/expenses.interface";
+import { currencyFormat } from "../../../utils/currency-format";
 
 interface ExpensesTableProps {
   onEditExpense: (expense: Expense) => void;
@@ -42,7 +43,7 @@ export const ExpensesTable: React.FC<ExpensesTableProps> = ({
                     <span>{expense.name}</span>
                   </OverlayTrigger>
                 </td>
-                <td>${expense.amount}</td>
+                <td>{currencyFormat(expense.amount)}</td>
                 <td>
                   <Badge pill bg="success">
                     {expense.isRecurring ? "SI" : "NO"}
@@ -68,7 +69,11 @@ export const ExpensesTable: React.FC<ExpensesTableProps> = ({
                   >
                     <i className="fas fa-edit"></i>
                   </Button>
-                  <Button variant="danger" size="sm" onClick={() => onDeleteExpense(expense)}>
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    onClick={() => onDeleteExpense(expense)}
+                  >
                     <i className="fas fa-trash"></i>
                   </Button>
                 </td>

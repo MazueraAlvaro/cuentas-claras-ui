@@ -1,6 +1,7 @@
 import { Badge, Button, OverlayTrigger, Table, Tooltip } from "react-bootstrap";
 import { useIncomesStore } from "../../../stores/incomes.store";
 import { Income } from "../../../interfaces/incomes.interface";
+import { currencyFormat } from "../../../utils/currency-format";
 
 interface IncomesTableProps {
   onEditIncome: (income: Income) => void;
@@ -41,7 +42,7 @@ export const IncomesTable: React.FC<IncomesTableProps> = ({
                     <span>{income.name}</span>
                   </OverlayTrigger>
                 </td>
-                <td>${income.amount}</td>
+                <td>{currencyFormat(income.amount)}</td>
                 <td>
                   <Badge pill bg="success">
                     {income.isRecurring ? "SI" : "NO"}
