@@ -184,7 +184,10 @@ export const MonthIncomesTable: React.FC<MonthIncomeTableProps> = ({
           Array.from({ length: totalRows - monthIncomes.length }).map(
             (_, index) => (
               <tr key={index}>
-                <td colSpan={5} height={48}></td>
+                <td
+                  colSpan={5}
+                  height={monthStatus === MonthStatus.OPEN ? 48 : 41}
+                ></td>
               </tr>
             )
           )}

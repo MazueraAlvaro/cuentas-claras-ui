@@ -1,3 +1,5 @@
+import { MonthExpense } from "./months.interface";
+
 export interface ExpenseType {
   id: number;
   name: string;
@@ -14,6 +16,7 @@ export interface Expense {
   startAt: string;
   endAt: string;
   expenseType: ExpenseType;
+  monthExpenses?: MonthExpense[];
 }
 
 export interface ExpenseInitialValues

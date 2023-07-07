@@ -30,6 +30,13 @@ export const SideNav: React.FC = () => {
               </div>
               Ingresos
             </Link>
+            <div className="sb-sidenav-menu-heading">INFO</div>
+            <Link className="nav-link" to="/accumulated">
+              <div className="sb-nav-link-icon">
+                <i className="fas fa-chart-simple"></i>
+              </div>
+              Acumulados
+            </Link>
           </div>
         </div>
         <div className="sb-sidenav-footer">

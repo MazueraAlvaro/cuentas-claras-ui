@@ -23,6 +23,7 @@ export interface MonthExpense {
   paid: boolean;
   expense: Expense;
   creditCard: boolean;
+  month?: Month;
 }
 
 export interface Month {
