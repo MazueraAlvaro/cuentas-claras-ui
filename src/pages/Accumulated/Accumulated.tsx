@@ -1,7 +1,17 @@
 import { Card } from "react-bootstrap";
 import { AccumulatedTable } from "./AccumulatedTable";
+import { Expense } from "../../interfaces/expenses.interface";
+import { AccumulatedExpense } from "./AccumulatedExpense";
+import { useState } from "react";
 
 export const Accumulated: React.FC = () => {
+  const [selectedExpense, setSelectedExpense] = useState<Partial<Expense>>();
+  const [showAccumulatedExpense, setShowAccumulatedExpense] =
+    useState<boolean>(false);
+  const handleExpenseAccumulated = (expense: Partial<Expense>) => {
+    setSelectedExpense(expense);
+    setShowAccumulatedExpense(true);
+  };
   return (
     <>
       <h1 className="mt-4">Acumulados</h1>
@@ -16,9 +26,18 @@ export const Accumulated: React.FC = () => {
           </Card.Title>
         </Card.Header>
         <Card.Body>
-          <AccumulatedTable />
+          <AccumulatedTable
+            onViewExpenseAccumulated={handleExpenseAccumulated}
+          />
         </Card.Body>
       </Card>
+      {selectedExpense && (
+        <AccumulatedExpense
+          show={showAccumulatedExpense}
+          setShow={setShowAccumulatedExpense}
+          expense={selectedExpense}
+        />
+      )}
     </>
   );
 };

@@ -4,8 +4,15 @@ import { Button, Table } from "react-bootstrap";
 import { env } from "../../../config/env";
 import { currencyFormat } from "../../../utils/currency-format";
 import { ExpenseAccumulated } from "../../../interfaces/accumulated.interface";
+import { Expense } from "../../../interfaces/expenses.interface";
 
-export const AccumulatedTable: React.FC = () => {
+export interface AccumulatedTableProps {
+  onViewExpenseAccumulated: (expense: Partial<Expense>) => void;
+}
+
+export const AccumulatedTable: React.FC<AccumulatedTableProps> = ({
+  onViewExpenseAccumulated,
+}) => {
   const [data, setData] = useState<ExpenseAccumulated[]>();
   const [months, setMonths] =
     useState<Array<{ index: number; name: string }>>();
@@ -33,7 +40,8 @@ export const AccumulatedTable: React.FC = () => {
         <tr>
           <th>#</th>
           <th>Nombre</th>
-          {months && months.map((month) => <th>{month.name}</th>)}
+          {months &&
+            months.map((month) => <th key={month.index}>{month.name}</th>)}
           <th>Total</th>
           <th>Opc</th>
         </tr>
@@ -47,7 +55,7 @@ export const AccumulatedTable: React.FC = () => {
                 <td>{accumulated.expense.name}</td>
                 {months &&
                   months.map((month) => (
-                    <td>
+                    <td key={month.index}>
                       {currencyFormat(
                         accumulated.months.find(
                           (accMonth) =>
@@ -60,7 +68,13 @@ export const AccumulatedTable: React.FC = () => {
                   <b>{currencyFormat(accumulated.totalPaid)}</b>
                 </td>
                 <td>
-                  <Button size="sm" className="me-1">
+                  <Button
+                    size="sm"
+                    className="me-1"
+                    onClick={() =>
+                      onViewExpenseAccumulated(accumulated.expense)
+                    }
+                  >
                     <i className="fas fa-eye"></i>
                   </Button>
                 </td>
