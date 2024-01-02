@@ -62,9 +62,9 @@ export const Dashboard: React.FC = () => {
   }, [month]);
 
   const getMonthsOptions = () => {
-    return Array.from({ length: new Date().getMonth() + 2 }, (_, i) => {
+    return [-1, 0 , 1].map((i) => {
       const date = new Date();
-      date.setMonth(i + 1);
+      date.setMonth(date.getMonth() + i);
       return date;
     }).map((value, index) => (
       <option
@@ -72,13 +72,13 @@ export const Dashboard: React.FC = () => {
         value={
           value.getFullYear() +
           "-" +
-          value.getMonth().toString().padStart(2, "0") +
+          (value.getMonth() + 1).toString().padStart(2, "0") +
           "-00"
         }
       >
         {value.getFullYear() +
           "-" +
-          value.getMonth().toString().padStart(2, "0")}
+          (value.getMonth() + 1).toString().padStart(2, "0")}
       </option>
     ));
   };
