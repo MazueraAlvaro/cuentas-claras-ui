@@ -22,7 +22,7 @@ export const ExpenseForm: React.FC<ExpenseFormProps> = ({
 }) => {
   const handleSubmit = (
     values: ExpenseInitialValues,
-    { setSubmitting }: FormikHelpers<ExpenseInitialValues>
+    { setSubmitting }: FormikHelpers<ExpenseInitialValues>,
   ) => {
     onSubmit(values).then(() => setSubmitting(false));
   };
@@ -218,7 +218,6 @@ export const ExpenseForm: React.FC<ExpenseFormProps> = ({
             </Form.Label>
             <Col sm={9}>
               <Form.Select
-                placeholder="Tipo de gasto"
                 value={values.expenseType}
                 onChange={handleChange}
                 isValid={touched.expenseType && !errors.expenseType}

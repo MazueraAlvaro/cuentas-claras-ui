@@ -19,7 +19,7 @@ interface IncomeFormProps {
 export const IncomeForm: React.FC<IncomeFormProps> = ({ income, onSubmit }) => {
   const handleSubmit = (
     values: IncomeInitialValues,
-    { setSubmitting }: FormikHelpers<IncomeInitialValues>
+    { setSubmitting }: FormikHelpers<IncomeInitialValues>,
   ) => {
     console.log(values);
     onSubmit(values).then(() => setSubmitting(false));
@@ -188,7 +188,6 @@ export const IncomeForm: React.FC<IncomeFormProps> = ({ income, onSubmit }) => {
             </Form.Label>
             <Col sm={9}>
               <Form.Select
-                placeholder="Tipo de ingreso"
                 value={values.incomeType}
                 onChange={handleChange}
                 isValid={touched.incomeType && !errors.incomeType}

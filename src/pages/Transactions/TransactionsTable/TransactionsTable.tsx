@@ -5,7 +5,7 @@ import {
 } from "../../../interfaces/transactions.interface";
 import { currencyFormat } from "../../../utils/currency-format";
 import { getDateFormatToDisplay } from "../../../utils/date-format";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { env } from "../../../config/env";
 
