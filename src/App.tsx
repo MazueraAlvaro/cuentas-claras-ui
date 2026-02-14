@@ -6,6 +6,7 @@ import { Layout } from "./pages/Layout";
 import { Expenses } from "./pages/Expenses";
 import { Incomes } from "./pages/Incomes";
 import { Accumulated } from "./pages/Accumulated";
+import { Transactions } from "./pages/Transactions";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/expenses" element={<Expenses />} />
         <Route path="/incomes" element={<Incomes />} />
         <Route path="/accumulated" element={<Accumulated />} />
+        <Route path="/transactions" element={<Transactions />} />
       </Route>
     </Routes>
   );

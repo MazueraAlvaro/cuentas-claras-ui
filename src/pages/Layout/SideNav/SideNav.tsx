@@ -17,6 +17,12 @@ export const SideNav: React.FC = () => {
               </div>
               Inicio
             </Link>
+            <Link className="nav-link" to="/transactions">
+              <div className="sb-nav-link-icon">
+                <i className="fas fa-money-bill-transfer"></i>
+              </div>
+              Transacciones
+            </Link>
             <div className="sb-sidenav-menu-heading">ADMIN</div>
             <Link className="nav-link" to="/expenses">
               <div className="sb-nav-link-icon">

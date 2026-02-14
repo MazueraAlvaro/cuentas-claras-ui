@@ -18,20 +18,27 @@ interface MonthPickerProps {
   onChange: (value: Date) => void;
   label: string;
   initialValue?: Date;
+  maxDetail?: "month" | "year" | "decade" | "century";
 }
 
 export const MonthPicker: React.FC<MonthPickerProps> = ({
   onChange,
   label,
   initialValue = new Date(),
+  maxDetail = "year",
 }) => {
   const [value, setValue] = useState<Value>(initialValue);
 
-  const getSelectedMonth = () => {
+  const getSelectedDate = (): string => {
     const month = (value as Date).getMonth();
     const year = (value as Date).getFullYear();
+    const day = (value as Date).getDate();
 
-    return monthAbbreviationByMonthIndex(month) + ". " + year;
+    if (maxDetail === "year")
+      return monthAbbreviationByMonthIndex(month) + ". " + year;
+    if (maxDetail === "month")
+      return day + " " + monthAbbreviationByMonthIndex(month) + ". " + year;
+    return year.toString();
   };
 
   const handleChange = (value: Value) => {
@@ -45,10 +52,9 @@ export const MonthPicker: React.FC<MonthPickerProps> = ({
         <Popover.Body>
           <Calendar
             locale="es-ES"
-            view="year"
             onChange={handleChange}
             onClickMonth={(value) => false}
-            maxDetail="year"
+            maxDetail={maxDetail}
             formatMonth={(locale, date) =>
               monthAbbreviationByMonthIndex(date.getMonth())
             }
@@ -70,7 +76,7 @@ export const MonthPicker: React.FC<MonthPickerProps> = ({
           <Form.Control
             placeholder="Desde"
             readOnly
-            value={getSelectedMonth()}
+            value={getSelectedDate()}
           />
         </FloatingLabel>
         <InputGroup.Text>
